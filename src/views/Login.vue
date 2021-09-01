@@ -29,11 +29,18 @@ export default {
         login(){
             this.$refs.userForm.validate()
             .then(async ()=>{
-                let str=await this.$api.userlogin("/users/login",this.user);
-                console.log(str);
+                let str=await this.$api.userlogin(this.user);
+                if(str){
+                    this.$router.push("/welcome");
+                    this.$store.commit("saveUserInfo",str)
+                    console.log(str);
+                }else{
+                    
+                }
             })
             .catch(err=>{
-
+                console.log(err);
+                this.user.userPwd="";
             });
         }
     }

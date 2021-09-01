@@ -17,7 +17,7 @@ let envConfig={
 
 export default {
     env,
-    mock:true,
+    mock:false,
     ...envConfig[env],
     storage:"user"
 };

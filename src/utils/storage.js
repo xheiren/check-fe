@@ -5,6 +5,7 @@ import config from "../config";
 export default {
     getItem(item){
         let str=this.getAll();
+        console.log(str);
         return str[item];
     },
     setItem(item,data){
@@ -14,7 +15,7 @@ export default {
         return "添加成功";
     },
     getAll(){
-        return JSON.parse(window.localStorage.getItem(config.storage));
+        return JSON.parse(window.localStorage.getItem(config.storage) || "{}");
     },
     removeItem(item){
         let str=this.getAll();

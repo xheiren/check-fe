@@ -2,6 +2,18 @@ import axios from "axios";
 
 //引入文件配置
 import config from "../config";
+import router from "../router";
+import {ElMessage} from "element-plus";
+
+const CODE={
+    SUCCESS:200,  //成功
+    PARAM_ERROR:"参数错误",  
+    USER_ACCOUNT_ERROR:"账号或密码错误",
+    USER_LOGIN_ERROR:30001,   //用户未登入
+    BUSINESS_ERROR:40001,   //业务请求失败
+    AUTH_ERROR:"认证失败或TOKEN过期",
+    NETWORK_ERROR:"网络请求异常，请稍后重试"
+};
 
 //创建一个axios对象，并赋予默认值
 const instance=axios.create({
@@ -11,7 +23,6 @@ const instance=axios.create({
 
 //请求拦截
 instance.interceptors.request.use(function(req){
-    console.log(req);
     return req;
 });
 
@@ -19,8 +30,23 @@ instance.interceptors.request.use(function(req){
 //响应拦截
 instance.interceptors.response.use(function(res){
     
-    let {data} =res;
-    return data;
+    let {data,msg,code} =res.data;
+    console.log(code);
+    if(code === 200){
+        return data;
+    }else if(code === 10001){
+        return Promise.reject(msg || CODE.USER_ACCOUNT_ERROR);
+    }else if(code === 50001){
+        ElMessage.error(msg || CODE.AUTH_ERROR);
+        setTimeout(() => {
+            router.push("/login");
+        },3000);
+        return Promise.reject(msg || CODE.AUTH_ERROR);
+    }else{
+        ElMessage.error(msg || CODE.NETWORK_ERROR);
+        return Promise.reject(msg || CODE.NETWORK_ERROR);
+    }
+    
 });
 
 //定义一个函数，可以在执行请求之前，做一次配置
